@@ -197,7 +197,7 @@ with st.sidebar:
         st.session_state['feedback_text'] = st.text_area("Condividi qui le tue considerazione o idee di miglioramento per questo strumento.", value=st.session_state['feedback_text'])
 
         # Submit feedback button
-        if st.button("Submit Feedback", key="feedback_button"):
+        if st.button("Invia Feedback", key="feedback_button"):
             if st.session_state['feedback_text']:
                 # Construct the conversation history as a string
                 conversation = "\n".join([f"{msg['type'].capitalize()}: {msg['content']}" for msg in st.session_state['history']])
