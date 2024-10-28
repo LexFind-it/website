@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "taxfinder-mvp",
+  "private_key_id": "a820ebb33bc5b938820f820494a810d278c47509",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9px+8kKg1EucY\nWvdbBSxYxLYrcOzoS4zl4eprBjB+ubww2QVDjbN7P1UOxogVXzd2L1Sv4Hdf9EbT\nhT+0YiuPYxk0Nh2ZDjAK1E36cMwA7JItOgP4Mj5yB+c6N6SJwRtIm+IhSvFK060K\nIMQMIWKlzUQ7IFUItML6UtI3TI5eQ/9Zdz0SWoiQznGT0darzFXw7vpg7rR9sPHx\nMhokv+NdcyUYnU7TcRg5jbFMzp6DVoNuoMF9EuwQAlCi8TF41Bj3KDyugYECwZuV\niPVKixQuIRFkY9V8OmZ4zZ5O6JXyIJIVx5HQBbJ2Kp0p1yq8iZGiomEeKd+PZH8s\nbJmvUEjFAgMBAAECggEAHJBzFnzIJORBs7ihuE8NaJpKIL1bpToZ0NbnrnJqc+/I\nEShio1PQlE/L4ROUU/m5Gf8Td4DsoeJiF4Iif+noSyqfFW7QIukQ4dSroPyDsWDw\nPEkYZ3Wz04tur2VJjijsUdGOq7qEoKNElPmt5XDS0Yuayvf57ruBAWBfgo4whDBh\nCkEwDOL50dDhCaUr6i+mczeQZNrXk+fXN/4TcOCuhgTMmjs1awNzhpIhnb80Ant0\nwnMKZwvm0Oy7osYdHQWh2dpMbsmtvYIayXq/igD6Xe81d1ia5cpfNXJS58/QAMG1\nKIUvQQgK/b/pAXWsN4j5bOcNv+yToBSQOPx6l7tZoQKBgQD/MHc1OqaZeGdy3J00\nviNjb8FGjXfQU0Jvvo+BWVHpmkIwsuJRJp1EjUSgBpyY2dvFiHITbhnWJVR8WH32\nv1H5kKI1oy4YsOjde+wdX5xMYe2tRTywRMylkNAy//WYhgZ9xT7EOVIUiycyibHb\n30Rb88xScLz8Q/4oLmkilRt94QKBgQC+QVw/k0+fynSTa8l8cv2+013pwqpNl6qa\njiciTem3EJsfsge+B+OtwVCXH1yyxlb6M3LScX4zn58JwzeqZez6oZf19rKsXMT3\nPwD8O8Jm9TV2RmDJW1Dp4c9csL0dRNftZJR0LzS4xdghaEh8Drr2i//NdsPQn6OQ\no3FK1qV/ZQKBgQDaeXfVjn0Lb1XBtLaybQaHHyptaLhnFqEOYisiJoJGaNa6Mqwn\npdOG2RsjlgWDpyDMoOBpWh2shREr0+cj1PAtpXH6UdYpNWxoEqw3CaAalMyTR2+J\nyZ0bMjvNLe3pwvTTwIbYH+rxw6CvV8t53k/8GWGYQwTJRLzXUcSY4udCgQKBgELg\nfMnIQXv80Z+kiu3ZCgMTD3cFO5IM1yZ/A5iWZKo6Bx1MGladNVY1ltuYZaBeAeLv\nRNRemqsQ1/m5io62R2gOd3k5X7Mg5Qe4OONxKjPAzCsoMAt3suiTvK1rXv6z3WcQ\nLPLuSQ0OVpvfqWMaVnQl4CRcNBbYlslX+pIBA6nVAoGAHOT0mS/1ac3V1GsYIRA2\nIhtVoqYnZsfwX3oq/Aho1Rb1OuVFjyE5CHvTS0aBfvkyS/3jvAtqujwBADl9fMf3\npv16KoLUivamD3JN8f38mI5hDnvPT0eUa1sBKmb3vfGZ1C+jKo6jYUr59C1cyrt8\nMM82VvYhfZZtnW4rc3laiKU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "bigquery-access@taxfinder-mvp.iam.gserviceaccount.com",
+  "client_id": "118141212550766908540",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bigquery-access%40taxfinder-mvp.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
