@@ -11,16 +11,17 @@ import pandas as pd
 #                                Custom CSS                                    #
 ################################################################################
 
-# Add custom CSS to hide the GitHub icon
-hide_share_button = """
+# CSS to hide all "Share" buttons and toolbar action buttons
+hide_buttons_css = """
     <style>
-    [data-testid="stBaseButton-header"] {
+    [data-testid="stBaseButton-header"], [data-testid="stToolbarActionButton"] {
         display: none;
     }
     </style>
 """
 
-st.markdown(hide_share_button, unsafe_allow_html=True)
+# Applying the CSS
+st.markdown(hide_buttons_css, unsafe_allow_html=True)
 
 
 ################################################################################
@@ -200,7 +201,7 @@ def send_email(feedback, conversation):
         server.quit()
         st.success("Il tuo feedback è stato inviato. Grazie!")
     except Exception as e:
-        st.error(f"Failed to send email: {e}")
+        st.error(f"Non è stato possibile inviare la email: {e}")
 
 
 
