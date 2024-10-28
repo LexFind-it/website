@@ -6,19 +6,16 @@ import time
 from google.cloud import bigquery
 import pandas as pd
 import os
+import json
 
 
 ################################################################################
 #                                BigQuery Setup                                #
 ################################################################################
 
-source_mapping = {
-    'Circolare n. 35 del 28_12_2023.pdf':'https://www.agenziaentrate.gov.it/portale/documents/20143/5718712/Circolare+articolo+6+dPR+601+1973+e+detassazione+utili_pdf.pdf/98d7e1ea-7c74-366f-f0bd-a7fbfffdf8bf'}
-
-# Initialize BigQuery client
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/Paolo/code/PaoloPiacenti/lexfindit/website/taxfinder-mvp-a820ebb33bc5.json"
-
-client = bigquery.Client(project="taxfinder-mvp")
+# Load the JSON key from Streamlit secrets and set up credentials
+service_account_info = json.loads(st.secrets["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
+client = bigquery.Client.from_service_account_info(service_account_info)
 
 BIG_QUERY_TABLE = "taxfinder-mvp.sources_metadata.documents_agenzia_entrate"
 
