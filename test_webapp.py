@@ -5,8 +5,6 @@ import time
 
 from google.cloud import bigquery
 import pandas as pd
-import os
-import json
 
 
 ################################################################################
@@ -14,7 +12,7 @@ import json
 ################################################################################
 
 # Load the JSON key from Streamlit secrets and set up credentials
-service_account_info = json.loads(st.secrets["GOOGLE_APPLICATION_CREDENTIALS_JSON"])
+service_account_info = st.secrets["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
 client = bigquery.Client.from_service_account_info(service_account_info)
 
 BIG_QUERY_TABLE = "taxfinder-mvp.sources_metadata.documents_agenzia_entrate"
@@ -184,7 +182,7 @@ def send_email(feedback, conversation):
         text = message.as_string()
         server.sendmail(from_email, to_email, text)
         server.quit()
-        st.success("Feedback submitted and email sent successfully!")
+        st.success("Il tuo feedback è stato inviato. Grazie!")
     except Exception as e:
         st.error(f"Failed to send email: {e}")
 
@@ -192,11 +190,11 @@ def send_email(feedback, conversation):
 
 
 with st.sidebar:
-    st.subheader("End Session and Provide Feedback")
+    st.subheader("La tua opinione conta")
 
     # Show feedback input if feedback not already given
     if not st.session_state['feedback_given']:
-        st.session_state['feedback_text'] = st.text_area("Please provide your feedback:", value=st.session_state['feedback_text'])
+        st.session_state['feedback_text'] = st.text_area("Condividi qui le tue considerazione o idee di miglioramento per questo strumento.", value=st.session_state['feedback_text'])
 
         # Submit feedback button
         if st.button("Submit Feedback", key="feedback_button"):
@@ -210,6 +208,6 @@ with st.sidebar:
                 # Mark feedback as given
                 st.session_state['feedback_given'] = True
             else:
-                st.warning("Please enter some feedback before submitting.")
+                st.warning("Per favore, scrivi qualcosa prima di inviare un messaggio.")
     else:
-        st.info("Feedback already submitted. Thank you!")
+        st.info("Il tuo feedback è stato già inviato. Grazie!")
