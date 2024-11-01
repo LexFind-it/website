@@ -41,7 +41,8 @@ BIG_QUERY_TABLE = "taxfinder-mvp.sources_metadata.documents_agenzia_entrate"
 
 # Function to make API request
 def get_bot_response(question, session_id):
-    url = "https://chat-api-1087014169033.europe-west1.run.app/ask"
+    # url = "https://chat-api-1087014169033.europe-west1.run.app/ask" #OLD TaxBot (deprecated)
+    url = "https://chat-api-774603275806.europe-west1.run.app/ask" #New LexFind.it
     headers = {"Content-Type": "application/json"}
     data = {
         "question": question,
@@ -140,7 +141,7 @@ if prompt := st.chat_input("Scrivi un messaggio a LexFind.it"):
         st.write_stream(simulate_stream(answer))  # Pass the generator directly to st.write_stream
 
         # If the answer is not "I don't know.", include sources as clickable links
-        if answer.lower() != "i don't know.":
+        if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
             # Remove duplicate sources
             filenames = list(set(sources))
 
