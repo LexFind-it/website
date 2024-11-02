@@ -7,6 +7,30 @@ from google.cloud import bigquery
 import pandas as pd
 
 
+
+################################################################################
+#                             Google Analytics                                 #
+################################################################################
+
+import streamlit.components.v1 as components
+
+# GA4 Tracking code
+GA4_CODE = """
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T6BJ258E1W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-T6BJ258E1W');
+</script>
+"""
+
+# Inject the tracking into the page
+components.html(GA4_CODE)
+
+
 ################################################################################
 #                                Custom CSS                                    #
 ################################################################################
