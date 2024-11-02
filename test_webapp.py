@@ -14,17 +14,18 @@ import pandas as pd
 # CSS to hide all "Share" buttons and toolbar action buttons
 hide_buttons_css = """
     <style>
+    /* Hide share and tool buttons */
     [data-testid="stBaseButton-header"], [data-testid="stToolbarActionButton"] {
         display: none;
     }
 
     /* Nascondi il profilo del creatore dell'app */
-    div[class*="_profilePreview_51w34_63"] {
+    div[class*="_profileContainer_51w34_53"] {
         display: none;
     }
 
     /* Nascondi il logo di Streamlit */
-    div[class*="_link_51w34_10"] {
+    div[class*="_container_51w34_1 _viewerBadge_nim44_23"] {
         display: none;
     }
     </style>
