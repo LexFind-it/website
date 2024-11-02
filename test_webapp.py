@@ -7,36 +7,6 @@ from google.cloud import bigquery
 import pandas as pd
 
 
-
-################################################################################
-#                             Google Analytics                                 #
-################################################################################
-
-import streamlit.components.v1 as components
-
-# GA4 Tracking code
-GA4_CODE = """
-<html>
-  <head>
-    <!-- Google Analytics tracking code -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6BJ258E1W"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-T6BJ258E1W');
-    </script>
-  </head>
-  <body></body>
-</html>
-"""
-
-# Inject the tracking into the page
-with open("google_analytics.html", "r") as f:
-    html_code = f.read()
-    components.html(html_code, height=0)
-
-
 ################################################################################
 #                                Custom CSS                                    #
 ################################################################################
@@ -45,6 +15,16 @@ with open("google_analytics.html", "r") as f:
 hide_buttons_css = """
     <style>
     [data-testid="stBaseButton-header"], [data-testid="stToolbarActionButton"] {
+        display: none;
+    }
+
+    /* Nascondi il profilo del creatore dell'app */
+    div[class*="_profilePreview_51w34_63"] {
+        display: none;
+    }
+
+    /* Nascondi il logo di Streamlit */
+    div[class*="_link_51w34_10"] {
         display: none;
     }
     </style>
