@@ -19,10 +19,18 @@ hide_buttons_css = """
         display: none;
     }
 
+    /* Nascondi il menu e il footer di Streamlit */
+    #MainMenu, footer {
+        display: none !important;
+    }
+
     /* Nascondi il profilo del creatore dell'app */
-    div[class*="_profileContainer"],
-    /* Nascondi il logo Streamlit */
-    div[class*="_viewerBadge"] {
+    div[class*="viewerBadge"], div[class*="stAppViewContainer"] > div:first-child {
+        display: none !important;
+    }
+
+    /* Nascondi altri badge o link con SVG */
+    div[class*="viewerBadge_link"] {
         display: none !important;
     }
     </style>
