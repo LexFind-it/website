@@ -12,23 +12,29 @@ import pandas as pd
 #                             Google Analytics                                 #
 ################################################################################
 
-from streamlit_javascript import st_javascript
+import streamlit.components.v1 as components
 
 # GA4 Tracking code
 GA4_CODE = """
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T6BJ258E1W"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-T6BJ258E1W');
-</script>
+<html>
+  <head>
+    <!-- Google Analytics tracking code -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6BJ258E1W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-T6BJ258E1W');
+    </script>
+  </head>
+  <body></body>
+</html>
 """
 
 # Inject the tracking into the page
-st_javascript(GA4_CODE)
+with open("google_analytics.html", "r") as f:
+    html_code = f.read()
+    components.html(html_code, height=0)
 
 
 ################################################################################
