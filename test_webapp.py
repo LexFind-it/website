@@ -18,23 +18,19 @@ hide_buttons_css = """
     [data-testid="stBaseButton-header"], [data-testid="stToolbarActionButton"] {
         display: none;
     }
-
-    /* Nascondi il profilo del creatore dell'app */
-    ._profileContainer_51w34_53,
-    ._profilePreview_51w34_63 {
-        display: none !important;
-    }
-
-    /* Nascondi il badge/link del logo Streamlit */
-    ._container_51w34_1,
-    ._link_51w34_10 {
-        display: none !important;
-    }
-</style>
+    </style>
 """
 
 # Applying the CSS
 st.markdown(hide_buttons_css, unsafe_allow_html=True)
+
+hide_streamlit_style = """
+            <style>
+            [data-testid="stToolbar"] {visibility: hidden !important;}
+            footer {visibility: hidden !important;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 ################################################################################
