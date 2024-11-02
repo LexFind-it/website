@@ -12,7 +12,7 @@ import pandas as pd
 #                             Google Analytics                                 #
 ################################################################################
 
-import streamlit.components.v1 as components
+from streamlit_javascript import st_javascript
 
 # GA4 Tracking code
 GA4_CODE = """
@@ -28,7 +28,7 @@ GA4_CODE = """
 """
 
 # Inject the tracking into the page
-components.html(GA4_CODE)
+st_javascript(GA4_CODE)
 
 
 ################################################################################
