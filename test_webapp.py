@@ -19,11 +19,33 @@ hide_buttons_css = """
         display: none;
     }
 
-    /* Nascondi la toolbar di Streamlit */
-    [data-testid="stToolbar"] {visibility: hidden !important;}
-
-    /* Nascondi il footer */
-    footer {visibility: hidden !important;}
+    div[data-testid="stToolbar"] {
+    visibility: hidden;
+    height: 0%;
+    position: fixed;
+    }
+    div[data-testid="stDecoration"] {
+    visibility: hidden;
+    height: 0%;
+    position: fixed;
+    }
+    div[data-testid="stStatusWidget"] {
+    visibility: hidden;
+    height: 0%;
+    position: fixed;
+    }
+    #MainMenu {
+    visibility: hidden;
+    height: 0%;
+    }
+    header {
+    visibility: hidden;
+    height: 0%;
+    }
+    footer {
+    visibility: hidden;
+    height: 0%;
+    }
     </style>
 """
 
