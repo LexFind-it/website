@@ -18,20 +18,17 @@ hide_buttons_css = """
     [data-testid="stBaseButton-header"], [data-testid="stToolbarActionButton"] {
         display: none;
     }
+
+    /* Nascondi la toolbar di Streamlit */
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+
+    /* Nascondi il footer */
+    footer {visibility: hidden !important;}
     </style>
 """
 
 # Applying the CSS
 st.markdown(hide_buttons_css, unsafe_allow_html=True)
-
-hide_streamlit_style = """
-            <style>
-            [data-testid="stToolbar"] {visibility: hidden !important;}
-            footer {visibility: hidden !important;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
 
 ################################################################################
 #                                BigQuery Setup                                #
