@@ -20,13 +20,10 @@ hide_buttons_css = """
     }
 
     /* Nascondi il profilo del creatore dell'app */
-    div[class*="_profileContainer_51w34_53"] {
-        display: none;
-    }
-
-    /* Nascondi il logo di Streamlit */
-    div[class*="_container_51w34_1 _viewerBadge_nim44_23"] {
-        display: none;
+    div[class*="_profileContainer"],
+    /* Nascondi il logo Streamlit */
+    div[class*="_viewerBadge"] {
+        display: none !important;
     }
     </style>
 """
