@@ -199,17 +199,18 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 
                     # Aggiungi i dati alla tabella
                     data.append({
-                        "Titolo": f"[{title}]({document_url})",  # Streamlit Markdown link
+                        "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
                         "Data": date,
-                        "Summary": summary.replace(". ", ".\n").replace("- ", "-\n")
+                        "Summary": summary #,
+                        # "Passaggi Rilevanti": legal_citations
                     })
 
                 # Creiamo il DataFrame
                 df_sources = pd.DataFrame(data)
 
                 # Mostriamo la tabella in Streamlit con i link HTML abilitati
-                # st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
-                st.dataframe(df_sources)
+                st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
+
 
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
