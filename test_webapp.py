@@ -122,7 +122,7 @@ for message in st.session_state.messages:
 
 # Create a chat input field to allow the user to enter a message. This will display
 # automatically at the bottom of the page.
-if prompt := st.chat_input("Scrivi un messaggio a LexFind.it"):
+if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 
     # Store and display the current prompt.
     st.session_state.messages.append({"role": "user", "content": prompt})
