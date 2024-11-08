@@ -181,18 +181,16 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                     data.append({
                         "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
                         "Data": date,
-                        "Summary": summary,
-                        "Passaggi Rilevanti": legal_citations
+                        "Summary": summary #,
+                        # "Passaggi Rilevanti": legal_citations
                     })
 
                 # Creiamo il DataFrame
                 df_sources = pd.DataFrame(data)
 
                 # Mostriamo la tabella in Streamlit con i link HTML abilitati
-                # st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
+                st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
 
-                # Visualizza la tabella con ordinamento interattivo
-                st.dataframe(df_sources)
 
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
