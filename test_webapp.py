@@ -5,6 +5,18 @@ import time
 
 import pandas as pd
 
+################################################################################
+#                           Page Configuration and Favicon                     #
+################################################################################
+
+
+# Set up the favicon and page title
+st.set_page_config(
+    page_title="TaxFinder",
+    page_icon="https://em-content.zobj.net/source/apple/391/balance-scale_2696-fe0f.png",  # Ensure favicon.ico is in the root directory
+    layout="wide"  # Adjust layout as needed
+)
+
 
 ################################################################################
 #                                Custom CSS                                    #
