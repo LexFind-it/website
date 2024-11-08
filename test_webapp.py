@@ -3,7 +3,6 @@ import requests
 import uuid  # Libreria per generare un UUID unico
 import time
 
-from google.cloud import bigquery
 import pandas as pd
 
 
@@ -52,16 +51,6 @@ hide_buttons_css = """
 # Applying the CSS
 st.markdown(hide_buttons_css, unsafe_allow_html=True)
 
-################################################################################
-#                                BigQuery Setup                                #
-################################################################################
-
-# Load the JSON key from Streamlit secrets and set up credentials
-service_account_info = st.secrets["GOOGLE_APPLICATION_CREDENTIALS_JSON"]
-client = bigquery.Client.from_service_account_info(service_account_info)
-
-BIG_QUERY_TABLE = "taxfinder-mvp.sources_metadata.documents_agenzia_entrate"
-
 
 ################################################################################
 #                              Support Functions                               #
@@ -69,8 +58,7 @@ BIG_QUERY_TABLE = "taxfinder-mvp.sources_metadata.documents_agenzia_entrate"
 
 # Function to make API request
 def get_bot_response(question, session_id):
-    # url = "https://chat-api-1087014169033.europe-west1.run.app/ask" #OLD TaxBot (deprecated)
-    url = "https://chat-api-774603275806.europe-west1.run.app/ask" #New LexFind.it
+    url = "https://chat-api-v2-774603275806.europe-west1.run.app/ask"
     headers = {"Content-Type": "application/json"}
     data = {
         "question": question,
@@ -86,21 +74,11 @@ def simulate_stream(response):
         yield word + " "
         time.sleep(0.05)
 
-# Function to retrieve documents metadata from BigQuery
-def get_source_metadata(filename):
-
-    transformed_filename = filename.replace("_", "/").replace(".pdf", "")
-
-    query = f"""
-    SELECT url, original_summary
-    FROM {BIG_QUERY_TABLE}
-    WHERE title = '{transformed_filename}'
-    """  # filename is now correctly enclosed in single quotes
-    query_job = client.query(query)
-    results = query_job.result()
-    for row in results:
-        return {"url": row.url, "summary": row.original_summary}
-    return {"url": "#", "summary": "Non disponibile"}
+# Funzione per estrarre il titolo da document_id
+def extract_title(document_id):
+    # Divide la stringa al primo trattino "-" e restituisce la prima parte
+    parts = document_id.split("-")
+    return parts[0] if parts else "Titolo Sconosciuto"
 
 
 ################################################################################
@@ -120,12 +98,12 @@ if 'input_key' not in st.session_state:
     st.session_state['input_key'] = str(uuid.uuid4())  # Use a unique key for each session
 
 # Show title, claim, and description.
-st.title("Lex Find it")
+st.title("TaxFinder")
 st.subheader("Riduci i tempi di ricerca grazie all'Intelligenza Artificiale")
 st.markdown("""
-Ti diamo il benvenuto sul _prototipo_ del nostro Assistente AI sul ***Diritto Tributario***.
-Il chatbot è in grado di basare le proprie risposte sulle *Circolari*, sui *Provvedimenti*, sulle *Risoluzioni*, e sulle
-*Risposte* del ministero per gli anni 2023 e 2024.
+Ti diamo il benvenuto sulla _beta_ del nostro Assistente AI sul ***Diritto Tributario***.
+Il chatbot è in grado di basare le proprie risposte su tutte le *Circolari*, *Provvedimenti*, *Risoluzioni*, e
+*Risposte* presenti negli archivi dell' Agenzia delle Entrate.
 
 ***Nota**: Questo bot va inteso come un prototipo, pertanto ti invitiamo a verificare la correttezza delle risposte.*
 
@@ -170,8 +148,12 @@ if prompt := st.chat_input("Scrivi un messaggio a LexFind.it"):
 
         # If the answer is not "I don't know.", include sources as clickable links
         if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
+
             # Remove duplicate sources
-            filenames = list(set(sources))
+            # filenames = list(set(sources))
+
+            # Rimozione delle fonti duplicate
+            filenames = list({source["document_id"]: source for source in sources}.values())
 
             if filenames:
 
@@ -180,9 +162,22 @@ if prompt := st.chat_input("Scrivi un messaggio a LexFind.it"):
                 # Costruiamo la lista dei dati con i link HTML per la colonna "Titolo"
                 data = []
                 for filename in filenames:
-                    metadata = get_source_metadata(filename)
-                    link = f'<a href="{metadata["url"]}" target="_blank">{filename}</a>'
-                    data.append({"Titolo": link, "Descrizione": metadata["summary"]})
+                    document_url = filename.get("url", "#")  # Default a '#' se l'URL è mancante
+                    title = extract_title(filename["document_id"])
+                    summary = filename.get("summary", "Descrizione non disponibile")
+                    legal_citations = "\n".join(filename.get("legal_citations", []))  # Passaggi rilevanti
+
+                    # Aggiungi i dati alla tabella
+                    data.append({
+                        "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
+                        "Summary": summary,
+                        "Passaggi Rilevanti": legal_citations
+                    })
+
+
+                    #metadata = get_source_metadata(filename)
+                    #link = f'<a href="{metadata["url"]}" target="_blank">{filename}</a>'
+                    #data.append({"Titolo": link, "Descrizione": metadata["summary"]})
 
                 # Creiamo il DataFrame
                 df = pd.DataFrame(data)
