@@ -74,11 +74,21 @@ def simulate_stream(response):
         yield word + " "
         time.sleep(0.05)
 
-# Funzione per estrarre il titolo da document_id
-def extract_title(document_id):
-    # Divide la stringa al primo trattino "-" e restituisce la prima parte
+
+# Funzione aggiornata per estrarre titolo e data da document_id
+def extract_title_and_date(document_id):
     parts = document_id.split("-")
-    return parts[0] if parts else "Titolo Sconosciuto"
+    title_part = parts[0] if parts else "Titolo Sconosciuto"
+
+    # Cerca la data nel formato gg/mm/aaaa
+    date_part = None
+    for word in title_part.split():
+        if "/" in word:
+            date_part = word
+            break
+
+    title = title_part.replace(date_part, "").strip() if date_part else title_part  # Rimuovi la data dal titolo
+    return title, date_part or "Data non disponibile"
 
 
 ################################################################################
@@ -163,27 +173,26 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                 data = []
                 for filename in filenames:
                     document_url = filename.get("url", "#")  # Default a '#' se l'URL è mancante
-                    title = extract_title(filename["document_id"])
+                    title, date = extract_title_and_date(filename["document_id"])
                     summary = filename.get("summary", "Descrizione non disponibile")
                     legal_citations = "\n".join(filename.get("legal_citations", []))  # Passaggi rilevanti
 
                     # Aggiungi i dati alla tabella
                     data.append({
                         "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
+                        "Data": date,
                         "Summary": summary,
                         "Passaggi Rilevanti": legal_citations
                     })
 
-
-                    #metadata = get_source_metadata(filename)
-                    #link = f'<a href="{metadata["url"]}" target="_blank">{filename}</a>'
-                    #data.append({"Titolo": link, "Descrizione": metadata["summary"]})
-
                 # Creiamo il DataFrame
-                df = pd.DataFrame(data)
+                df_sources = pd.DataFrame(data)
 
                 # Mostriamo la tabella in Streamlit con i link HTML abilitati
-                st.markdown(df.to_html(escape=False, index=False), unsafe_allow_html=True)
+                # st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
+
+                # Visualizza la tabella con ordinamento interattivo
+                st.dataframe(df_sources)
 
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
