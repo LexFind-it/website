@@ -208,8 +208,8 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                 df_sources = pd.DataFrame(data)
 
                 # Mostriamo la tabella in Streamlit con i link HTML abilitati
-                st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
-
+                # st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
+                st.dataframe(df_sources)
 
 
     st.session_state.messages.append({"role": "assistant", "content": answer})
