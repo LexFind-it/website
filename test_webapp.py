@@ -103,11 +103,8 @@ def extract_title(document_id):
     parts = document_id.split("-")
     title_part = parts[0] if parts else "Titolo Sconosciuto"
 
-    # Extract the date
-    date = extract_date(document_id)
-
     # Include the date in the title if found
-    return f"{title_part.strip()} {date}" if date != "Data non disponibile" else title_part.strip()
+    return title_part.strip()
 
 
 ################################################################################
@@ -269,7 +266,7 @@ with st.sidebar:
         if st.button("Invia Feedback", key="feedback_button"):
             if st.session_state['feedback_text']:
                 # Construct the conversation history as a string
-                conversation = "\n".join([f"{msg['type'].capitalize()}: {msg['content']}" for msg in st.session_state['history']])
+                conversation = "\n".join([f"{msg['type'].capitalize()}: {msg['content']}" for msg in st.session_state['messages']])
 
                 # Send the email with the feedback and conversation
                 send_email(st.session_state['feedback_text'], conversation)
