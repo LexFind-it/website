@@ -229,8 +229,9 @@ email_password = st.secrets['EMAIL_PASS']
 
 # Function to send feedback email
 def send_email(feedback, conversation):
-    to_email = "work.paolopiacenti@gmail.com"
-    subject = "RAG Feedback - Tax bot"
+    to_email = "x+1208632639979553@mail.asana.com"
+    #subject = "RAG Feedback - Tax bot"
+    subject = f"User Feedback: {feedback}"
 
     # Set up the MIME
     message = MIMEMultipart()
