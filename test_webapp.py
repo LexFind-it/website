@@ -266,7 +266,7 @@ with st.sidebar:
         if st.button("Invia Feedback", key="feedback_button"):
             if st.session_state['feedback_text']:
                 # Construct the conversation history as a string
-                conversation = "\n".join([f"{msg['type'].capitalize()}: {msg['content']}" for msg in st.session_state['messages']])
+                conversation = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state['messages']])
 
                 # Send the email with the feedback and conversation
                 send_email(st.session_state['feedback_text'], conversation)
