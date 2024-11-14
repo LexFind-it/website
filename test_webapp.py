@@ -14,7 +14,7 @@ import pandas as pd
 st.set_page_config(
     page_title="TaxFinder",
     page_icon="https://em-content.zobj.net/source/apple/391/balance-scale_2696-fe0f.png",  # Ensure favicon.ico is in the root directory
-    layout="wide"  # Adjust layout as needed
+    layout="centered"  # Adjust layout as needed
 )
 
 
@@ -112,16 +112,17 @@ def extract_title(document_id):
 ################################################################################
 
 # Initialize session state for the conversation and feedback
-if 'history' not in st.session_state:
-    st.session_state['history'] = []
+if "messages" not in st.session_state: # This ensures that the messages persist across reruns.
+    st.session_state.messages = []
 if 'session_id' not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if 'feedback_given' not in st.session_state:
     st.session_state['feedback_given'] = False
-if 'feedback_text' not in st.session_state:
-    st.session_state['feedback_text'] = ""
 if 'input_key' not in st.session_state:
     st.session_state['input_key'] = str(uuid.uuid4())  # Use a unique key for each session
+if 'df_sources_html' not in st.session_state:
+    st.session_state['df_sources_html'] = ""  # Store table HTML as a string for persistent display
+
 
 # Show title, claim, and description.
 st.title("TaxFinder")
@@ -134,11 +135,6 @@ Il chatbot è in grado di basare le proprie risposte su tutte le *Circolari*, *P
 ***Nota**: Questo bot va inteso come un prototipo, pertanto ti invitiamo a verificare la correttezza delle risposte.*
 
 """)
-
-# Create a session state variable to store the chat messages. This ensures that the
-# messages persist across reruns.
-if "messages" not in st.session_state:
-    st.session_state.messages = []
 
 
 # Display the existing chat messages via `st.chat_message`.
@@ -175,9 +171,6 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
         # If the answer is not "I don't know.", include sources as clickable links
         if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
 
-            # Remove duplicate sources
-            # filenames = list(set(sources))
-
             # Rimozione delle fonti duplicate
             filenames = list({source["document_id"]: source for source in sources}.values())
 
@@ -197,16 +190,21 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                     # Aggiungi i dati alla tabella
                     data.append({
                         "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
-                        "Data": date,
+                        # "Data": date,
                         "Summary": summary #,
                         # "Passaggi Rilevanti": legal_citations
                     })
 
                 # Creiamo il DataFrame
-                df_sources = pd.DataFrame(data)
+                st.session_state['df_sources'] = pd.DataFrame(data)
+                st.session_state['df_sources_html'] =  st.session_state['df_sources'].to_html(escape=False, index=False)
 
-                # Mostriamo la tabella in Streamlit con i link HTML abilitati
-                st.markdown(df_sources.to_html(escape=False, index=False), unsafe_allow_html=True)
+                # Access df_sources from session state whenever needed
+                if not st.session_state['df_sources'].empty:
+                    # Display the DataFrame in Streamlit
+                    st.markdown(st.session_state['df_sources_html'], unsafe_allow_html=True)
+                else:
+                    st.write("Nessuna fonte disponibile.")
 
 
 
@@ -221,13 +219,13 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+# Email credentials
 from_email = st.secrets['EMAIL_USER']
 email_password = st.secrets['EMAIL_PASS']
 
 # Function to send feedback email
-def send_email(feedback, conversation):
-    to_email = "x+1208632639979553@mail.asana.com"
-    #subject = "RAG Feedback - Tax bot"
+def send_email(feedback, conversation, sources):
+    to_email = "x+1208737819974597@mail.asana.com"
     subject = f"User Feedback: {feedback}"
 
     # Set up the MIME
@@ -237,43 +235,57 @@ def send_email(feedback, conversation):
     message["Subject"] = subject
 
     # Construct the email body
-    email_body = f"User Feedback:\n{feedback}\n\nConversation History:\n{conversation}"
+    email_body = f"User Feedback:\n{feedback}\n\nConversation History:\n{conversation}\n\nSources:\n{sources}"
     message.attach(MIMEText(email_body, "plain"))
 
     try:
         # Sending the mail using Gmail's SMTP server
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login(from_email, email_password)  # Use the app password loaded from env variable
-        text = message.as_string()
-        server.sendmail(from_email, to_email, text)
+        server.login(from_email, email_password)
+        server.sendmail(from_email, to_email, message.as_string())
         server.quit()
         st.success("Il tuo feedback è stato inviato. Grazie!")
     except Exception as e:
         st.error(f"Non è stato possibile inviare la email: {e}")
-
-
-
 
 with st.sidebar:
     st.subheader("La tua opinione conta")
 
     # Show feedback input if feedback not already given
     if not st.session_state['feedback_given']:
-        st.session_state['feedback_text'] = st.text_area("Condividi qui le tue considerazione o idee di miglioramento per questo strumento.", value=st.session_state['feedback_text'])
+        # Feedback form
+        reasons = st.multiselect(
+            "Come è andata la tua esperienza con TaxFinder?",
+            [
+                "😊 Tutto perfetto!",
+                "🐢 Risposta troppo lenta",
+                "❌ Documento rilevante non trovato",
+                "🔍 Troppi documenti non rilevanti",
+                "🚫 Risposta incompleta o errata"
+            ],
+            help="Seleziona tutte le opzioni applicabili"
+        )
+
+        description = st.text_area("Dicci di più su come possiamo migliorare.")
 
         # Submit feedback button
         if st.button("Invia Feedback", key="feedback_button"):
-            if st.session_state['feedback_text']:
-                # Construct the conversation history as a string
+            if reasons or description:
+                subject = f"{'; '.join(reasons) or 'Altro'} - {description}"
+
+                # Conversation history
                 conversation = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in st.session_state['messages']])
 
-                # Send the email with the feedback and conversation
-                send_email(st.session_state['feedback_text'], conversation)
+                # Sources, if available
+                sources_html = st.session_state['df_sources'].to_html(escape=False, index=False) if not st.session_state['df_sources'].empty else "Nessuna fonte disponibile."
+
+                # Send feedback
+                send_email(subject, conversation, sources_html)
 
                 # Mark feedback as given
                 st.session_state['feedback_given'] = True
             else:
-                st.warning("Per favore, scrivi qualcosa prima di inviare un messaggio.")
+                st.warning("Per favore, compila almeno un motivo o una descrizione.")
     else:
         st.info("Il tuo feedback è stato già inviato. Grazie!")
