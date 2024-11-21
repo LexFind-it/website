@@ -70,7 +70,7 @@ st.markdown(hide_buttons_css, unsafe_allow_html=True)
 
 # Function to make API request
 def get_bot_response(question, session_id):
-    url = "https://chat-api-v2-774603275806.europe-west1.run.app/ask"
+    url = "https://chat-api-v3-774603275806.europe-west1.run.app/ask"
     headers = {"Content-Type": "application/json"}
     data = {
         "question": question,
@@ -172,7 +172,7 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
         if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
 
             # Rimozione delle fonti duplicate
-            filenames = list({source["document_id"]: source for source in sources}.values())
+            filenames = list({source["title"]: source for source in sources}.values())
 
             if filenames:
 
@@ -182,9 +182,9 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                 data = []
                 for filename in filenames:
                     document_url = filename.get("url", "#")  # Default a '#' se l'URL è mancante
-                    title = extract_title(filename["document_id"])
-                    date = extract_date(filename["document_id"])
-                    summary = filename.get("summary", "Descrizione non disponibile")
+                    title = extract_title(filename["title"])
+                    date = extract_date(filename["title"])
+                    summary = filename.get("original_summary", "Descrizione non disponibile")
                     legal_citations = "\n".join(filename.get("legal_citations", []))  # Passaggi rilevanti
 
                     # Aggiungi i dati alla tabella
