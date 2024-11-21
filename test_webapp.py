@@ -184,12 +184,14 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                     document_url = filename.get("url", "#")  # Default a '#' se l'URL è mancante
                     title = extract_title(filename["title"])
                     date = extract_date(filename["title"])
+                    score = filename.get("score")
                     summary = filename.get("original_summary", "Descrizione non disponibile")
                     legal_citations = "\n".join(filename.get("legal_citations", []))  # Passaggi rilevanti
 
                     # Aggiungi i dati alla tabella
                     data.append({
                         "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
+                        "Rilevanza": f"{score:.2f}%",
                         # "Data": date,
                         "Summary": summary #,
                         # "Passaggi Rilevanti": legal_citations
