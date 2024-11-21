@@ -191,7 +191,7 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
                     # Aggiungi i dati alla tabella
                     data.append({
                         "Titolo": f'<a href="{document_url}" target="_blank">{title}</a>',
-                        "Rilevanza": f"{score:.2f}%",
+                        "Rilevanza": f"{score*100:.2f}%",
                         # "Data": date,
                         "Summary": summary #,
                         # "Passaggi Rilevanti": legal_citations
