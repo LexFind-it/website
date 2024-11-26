@@ -5,6 +5,8 @@ import time
 
 import subprocess
 
+from LinkolnParser import LinkolnParser
+
 import pandas as pd
 
 ################################################################################
@@ -135,26 +137,15 @@ def extract_title(document_id):
 #                       Include Lex References Hyperlinks                      #
 ################################################################################
 
+# Funzione aggiornata per arricchire con riferimenti normativi
 def enrich_with_legal_references(text):
-    jar_path = "lib/linkoln2-parser.jar"
+    # Inizializza il parser
+    parser = LinkolnParser(strict_mode=True)
 
-    try:
-        # Esegui il JAR e passa il testo come input
-        result = subprocess.run(
-            ["java", "-jar", jar_path],
-            input=text,
-            capture_output=True,
-            text=True
-        )
+    # Analizza il testo per arricchirlo con riferimenti normativi
+    document = parser.parse(text)
+    return document.get_annotated_content()
 
-        # Se il parser funziona, restituisci il testo elaborato
-        if result.returncode == 0:
-            return result.stdout  # Il risultato del parser
-        else:
-            raise Exception(result.stderr)
-    except Exception as e:
-        st.error(f"Errore durante l'elaborazione dei riferimenti normativi: {e}")
-        return text  # Restituisce il testo originale in caso di errore
 
 ################################################################################
 #                                 Chatbot Core                                 #
