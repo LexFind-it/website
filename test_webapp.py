@@ -3,6 +3,8 @@ import requests
 import uuid  # Libreria per generare un UUID unico
 import time
 
+import subprocess
+
 import pandas as pd
 
 ################################################################################
@@ -63,6 +65,23 @@ hide_buttons_css = """
 # Applying the CSS
 st.markdown(hide_buttons_css, unsafe_allow_html=True)
 
+# JavaScript for link hover effects
+st.components.v1.html("""
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('mouseover', () => {
+                    link.style.color = 'blue';
+                    link.style.textDecoration = 'underline';
+                });
+                link.addEventListener('mouseout', () => {
+                    link.style.color = 'inherit';
+                    link.style.textDecoration = 'none';
+                });
+            });
+        });
+    </script>
+""", height=0)
 
 ################################################################################
 #                              Support Functions                               #
@@ -86,6 +105,12 @@ def simulate_stream(response):
         yield word + " "
         time.sleep(0.05)
 
+# Generatore per mostrare il testo arricchito come stream
+def simulate_stream_with_links(response):
+    enriched_text = enrich_with_legal_references(response)
+    for word in enriched_text.split():
+        yield word + " "
+        time.sleep(0.05)
 
 # Function to extract only the date from document_id
 def extract_date(document_id):
@@ -106,6 +131,30 @@ def extract_title(document_id):
     # Include the date in the title if found
     return title_part.strip()
 
+################################################################################
+#                       Include Lex References Hyperlinks                      #
+################################################################################
+
+def enrich_with_legal_references(text):
+    jar_path = "lib/linkoln2-parser.jar"
+
+    try:
+        # Esegui il JAR e passa il testo come input
+        result = subprocess.run(
+            ["java", "-jar", jar_path],
+            input=text,
+            capture_output=True,
+            text=True
+        )
+
+        # Se il parser funziona, restituisci il testo elaborato
+        if result.returncode == 0:
+            return result.stdout  # Il risultato del parser
+        else:
+            raise Exception(result.stderr)
+    except Exception as e:
+        st.error(f"Errore durante l'elaborazione dei riferimenti normativi: {e}")
+        return text  # Restituisce il testo originale in caso di errore
 
 ################################################################################
 #                                 Chatbot Core                                 #
@@ -166,7 +215,7 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 
     # Use st.write_stream with the simulated stream to display the response
     with st.chat_message("assistant"):
-        st.write_stream(simulate_stream(answer))  # Pass the generator directly to st.write_stream
+        st.write_stream(simulate_stream_with_links(answer))  # Pass the generator directly to st.write_stream
 
         # If the answer is not "I don't know.", include sources as clickable links
         if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
