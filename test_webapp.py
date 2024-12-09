@@ -5,7 +5,7 @@ import time
 
 import subprocess
 
-from LinkolnParser import LinkolnParser
+#from LinkolnParser import LinkolnParser
 
 import pandas as pd
 
@@ -25,6 +25,17 @@ st.set_page_config(
 ################################################################################
 #                                Custom CSS                                    #
 ################################################################################
+
+# Google Analytics Tracking Script
+st.markdown(f"""
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6BJ258E1W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){{dataLayer.push(arguments);}}
+      gtag('js', new Date());
+      gtag('config', 'G-T6BJ258E1W');
+    </script>
+""", unsafe_allow_html=True)
 
 # CSS to hide all "Share" buttons and toolbar action buttons
 hide_buttons_css = """
@@ -94,7 +105,7 @@ def get_bot_response(question, session_id):
     url = "https://chat-api-v3-774603275806.europe-west1.run.app/ask"
     headers = {"Content-Type": "application/json"}
     data = {
-        "question": question,
+        "question": question + "Per favore crea una risposta dettagliata citando le fonti.",
         "session_id": session_id
     }
     response = requests.post(url, json=data, headers=headers)
@@ -109,10 +120,20 @@ def simulate_stream(response):
 
 # Generatore per mostrare il testo arricchito come stream
 def simulate_stream_with_links(response):
-    enriched_text = enrich_with_legal_references(response)
-    for word in enriched_text.split():
-        yield word + " "
-        time.sleep(0.05)
+    try:
+        # Arricchisci il testo con riferimenti normativi
+        enriched_text = enrich_with_legal_references(response)
+
+        # Accumula tutto il testo in una lista
+        rendered_text = []
+        for word in enriched_text.split():
+            rendered_text.append(word)
+            time.sleep(0.05)  # Simula il ritardo
+        return " ".join(rendered_text)  # Restituisci il testo completo
+    except Exception as e:
+        st.error(f"Errore durante l'elaborazione del testo: {e}")
+        return ""
+
 
 # Function to extract only the date from document_id
 def extract_date(document_id):
@@ -137,14 +158,27 @@ def extract_title(document_id):
 #                       Include Lex References Hyperlinks                      #
 ################################################################################
 
-# Funzione aggiornata per arricchire con riferimenti normativi
 def enrich_with_legal_references(text):
-    # Inizializza il parser
-    parser = LinkolnParser(strict_mode=True)
+    try:
+        # Esegui il parser tramite il wrapper Java
+        result = subprocess.run(
+            ["java", "-cp", ".:lib/linkoln2-parser.jar", "MainWrapper", text],
+            capture_output=True,
+            text=True
+        )
 
-    # Analizza il testo per arricchirlo con riferimenti normativi
-    document = parser.parse(text)
-    return document.get_annotated_content()
+        # Verifica eventuali errori
+        if result.returncode != 0:
+            raise Exception(f"Errore durante l'esecuzione del parser: {result.stderr}")
+
+        # Prendi solo la parte HTML
+        output_lines = result.stdout.split("\n")
+        html_output = "\n".join(output_lines[output_lines.index("2) HTML:") + 1:]).strip()
+
+        return html_output
+
+    except Exception as e:
+        raise Exception(f"Errore durante l'esecuzione del parser: {e}")
 
 
 ################################################################################
@@ -206,7 +240,12 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 
     # Use st.write_stream with the simulated stream to display the response
     with st.chat_message("assistant"):
-        st.write_stream(simulate_stream_with_links(answer))  # Pass the generator directly to st.write_stream
+        # st.markdown(simulate_stream_with_links(answer), unsafe_allow_html=True)  # Pass the generator directly to st.write_stream
+        with st.spinner("Sto formulando la risposta..."):
+            try:
+                st.markdown(enrich_with_legal_references(answer), unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Errore durante la visualizzazione del messaggio: {e}")
 
         # If the answer is not "I don't know.", include sources as clickable links
         if answer.lower() != "Mi dispiace, ma non sono in grado di fornire una risposta.".lower():
@@ -216,7 +255,7 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 
             if filenames:
 
-                st.write("\n\n**Fonti:**\n\n")
+                st.write("\n\n**Riferimenti Agenzia delle Entrate:**\n\n")
 
                 # Costruiamo la lista dei dati con i link HTML per la colonna "Titolo"
                 data = []
@@ -260,10 +299,14 @@ if prompt := st.chat_input("Scrivi un messaggio a TaxFinder"):
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import os
+
+from_email = os.environ['EMAIL_USER']
+email_password = os.environ['EMAIL_PASS']
 
 # Email credentials
-from_email = st.secrets['EMAIL_USER']
-email_password = st.secrets['EMAIL_PASS']
+#from_email = st.secrets['EMAIL_USER']
+#email_password = st.secrets['EMAIL_PASS']
 
 # Function to send feedback email
 def send_email(feedback, conversation, sources):
