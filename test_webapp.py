@@ -102,7 +102,7 @@ st.components.v1.html("""
 
 # Function to make API request
 def get_bot_response(question, session_id):
-    url = "https://chat-api-v3-774603275806.europe-west1.run.app/ask"
+    url = "https://chat-api-v3-rollback-774603275806.europe-west1.run.app/ask"
     headers = {"Content-Type": "application/json"}
     data = {
         "question": question + "Per favore crea una risposta dettagliata citando le fonti.",
