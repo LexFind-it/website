@@ -304,10 +304,6 @@ import os
 from_email = os.environ['EMAIL_USER']
 email_password = os.environ['EMAIL_PASS']
 
-# Email credentials
-#from_email = st.secrets['EMAIL_USER']
-#email_password = st.secrets['EMAIL_PASS']
-
 # Function to send feedback email
 def send_email(feedback, conversation, sources):
     to_email = "x+1208737819974597@mail.asana.com"
@@ -336,6 +332,10 @@ def send_email(feedback, conversation, sources):
 
 with st.sidebar:
     st.subheader("La tua opinione conta")
+
+    # Initialize `df_sources` to prevent KeyError
+    if 'df_sources' not in st.session_state:
+        st.session_state['df_sources'] = pd.DataFrame()
 
     # Show feedback input if feedback not already given
     if not st.session_state['feedback_given']:
